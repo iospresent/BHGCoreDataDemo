@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5063" systemVersion="12F45" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="MainCategory" representedClassName="MainCategory" syncable="YES">
+        <attribute name="categoryId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="categoryName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="index" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="thumbnail" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="subs" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="SubCategory" inverseName="main" inverseEntity="SubCategory" syncable="YES"/>
+    </entity>
+    <entity name="ProductItem" representedClassName="ProductItem" syncable="YES">
+        <relationship name="subcat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SubCategory" inverseName="items" inverseEntity="SubCategory" syncable="YES"/>
+    </entity>
+    <entity name="SubCategory" representedClassName="SubCategory" syncable="YES">
+        <attribute name="categoryId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="categoryName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="index" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="parentId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="thumbnail" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="items" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="ProductItem" inverseName="subcat" inverseEntity="ProductItem" syncable="YES"/>
+        <relationship name="main" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MainCategory" inverseName="subs" inverseEntity="MainCategory" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="MainCategory" positionX="-3825" positionY="-1143" width="128" height="133"/>
+        <element name="ProductItem" positionX="-3422" positionY="-886" width="128" height="58"/>
+        <element name="SubCategory" positionX="-3618" positionY="-1071" width="128" height="163"/>
+    </elements>
+</model>
