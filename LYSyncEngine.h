@@ -49,7 +49,7 @@
 
 //将当前数组处理至CoreData
 
--(void)processDataArray:(NSArray *)dataArray intoCoreDataForEntityObject:(NSManagedObject *)entity withIdKey:(NSString *)entityIdKey;
+-(void)processDataArray:(NSArray *)dataArray intoCoreDataForEntityObject:(NSString *)entityName withIdKey:(NSString *)entityIdKey;
 
 //从数据库中调出数据
 -(NSArray *)loadDataFromCoreDataForEntity:(NSString *)entityName withId:(NSString *)parentId sortUsingIndex:(BOOL)isSorted;

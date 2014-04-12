@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		14F5E3196DA44A4F92562E78 /* libPods-BHGDataNew.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33BD85F12E404D9A8C633BD4 /* libPods-BHGDataNew.a */; };
+		1813C75718F91CA200E778FC /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1813C75618F91CA200E778FC /* TestViewController.m */; };
 		1A055A7D18F8583600EA68C0 /* Model.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 1A055A7C18F8583600EA68C0 /* Model.xcdatamodel */; };
 		1A055A8218F8584B00EA68C0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A055A7F18F8584B00EA68C0 /* Reachability.m */; };
 		1A055A8318F8584B00EA68C0 /* LYSyncEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A055A8118F8584B00EA68C0 /* LYSyncEngine.m */; };
@@ -51,6 +52,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1813C75518F91CA200E778FC /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		1813C75618F91CA200E778FC /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		1A055A7C18F8583600EA68C0 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		1A055A7E18F8584B00EA68C0 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		1A055A7F18F8584B00EA68C0 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -133,6 +136,8 @@
 		1AA8B80918DCA82100E91A36 = {
 			isa = PBXGroup;
 			children = (
+				1813C75518F91CA200E778FC /* TestViewController.h */,
+				1813C75618F91CA200E778FC /* TestViewController.m */,
 				1AFB442818F9B79D0038FB18 /* ProductItem.h */,
 				1AFB442918F9B79D0038FB18 /* ProductItem.m */,
 				1AFB442518F9B79D0038FB18 /* MainCategory.h */,
@@ -380,6 +385,7 @@
 				1AA8B85B18DCA8E300E91A36 /* MainDataTVC.m in Sources */,
 				1A055AA318F8853900EA68C0 /* ItemDataTVC.m in Sources */,
 				1A055A7D18F8583600EA68C0 /* Model.xcdatamodel in Sources */,
+				1813C75718F91CA200E778FC /* TestViewController.m in Sources */,
 				FA88698C18DEDBD100F92F2C /* Item.m in Sources */,
 				1A055A9C18F859D600EA68C0 /* MyCell.m in Sources */,
 				1A055A8318F8584B00EA68C0 /* LYSyncEngine.m in Sources */,

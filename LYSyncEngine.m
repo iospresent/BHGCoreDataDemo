@@ -327,22 +327,24 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
 -(NSString *)dateForEntity:(NSString *)entityName withIdKey:(NSString *)entityIdKey IdValue:(NSString *)entityIdValue{
     NetworkStatus status =  [self.networkReachability currentReachabilityStatus];
     if (!self.syncInProgress && status != NotReachable){
-        NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"entityName"];
-            if (!entityIdKey && !entityIdValue) {
-                request.predicate = [NSPredicate predicateWithFormat:@"%K = %@", entityIdKey,entityIdValue];
-            }
-            NSUInteger count = [self.appDelegate.cdh.context countForFetchRequest:request error:nil];
-            if (!count) {
-                 return  @"1654-05-01 00:00:00";
-            } else {
-                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-
-                return [dateFormatter stringFromDate:[self mostRecentUpdatedAtDateForEntityWithName:entityName usingRequest:request]];
-            
-            }
+        NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:entityName];
+        if (!entityIdKey && !entityIdValue) {
+            request.predicate = [NSPredicate predicateWithFormat:@"%K = %@", entityIdKey,entityIdValue];
         }
+        NSUInteger count = [self.appDelegate.cdh.context countForFetchRequest:request error:nil];
+        if (!count) {
+            return  @"1654-05-01 00:00:00";
+        } else {
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            
+            return [dateFormatter stringFromDate:[self mostRecentUpdatedAtDateForEntityWithName:entityName usingRequest:request]];
+            
+        }
+    }
     return nil;
+    
+    //return  @"2011-01-01 00:00:00";
 }
 -(NSString *)dateForEntityObject:(NSManagedObject *)entity withChildRelationshipKey:(NSString *)key{
     NSOrderedSet *children = [entity valueForKey:key];
@@ -357,21 +359,59 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
     return nil;
 }
 
--(void)processDataArray:(NSArray *)dataArray intoCoreDataForEntityObject:(NSManagedObject *)entity withIdKey:(NSString *)entityIdKey{
-    [self.appDelegate.cdh.parentContext performBlockAndWait:^{
-        NSString *entityName = NSStringFromClass([entity class]);
-        for (NSDictionary *data in dataArray) {
-            NSManagedObject *object = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:self.appDelegate.cdh.parentContext];
-            /********
-             
-             映射内容
-             
-             **********/
+-(void)processDataArray:(NSArray *)dataArray intoCoreDataForEntityObject:(NSString *)entityName withIdKey:(NSString *)entityIdKey{
+    
+    
+    NSEntityDescription *tempEntity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self.appDelegate.cdh.parentContext];
+    NSArray *proNames=[[tempEntity attributesByName] allKeys];
+    
+    
+    for (NSDictionary *dic in dataArray)
+    {
+        NSArray *kes=[dic allKeys];
+        
+        NSObject *entity=[NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:self.appDelegate.cdh.parentContext];
+        
+        
+        for (int i=0; i<[proNames count]; i++)
+        {
+            if ([kes containsObject:proNames[i]]&&(dic[proNames[i]]))
+            {
+                
+                [entity setValue:[NSString stringWithFormat:@"%@",dic[proNames[i]]] forKey:proNames[i]];
+                
+            }else
+            {
+                continue;
+            }
         }
-    }];
+    }
     [self.appDelegate.cdh bgSaveContext];
     [self.appDelegate.cdh.parentContext reset];
     [self SyncCompleted];
+    
+//    [[self getAppDelegate].cdh backgroundSaveContext];
+    
+//    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:entityName];
+//    request.predicate = nil;
+//    entitys=[[[self getAppDelegate].cdh.context executeFetchRequest:request error:nil] mutableCopy];
+//    return entitys;
+    
+    
+//    [self.appDelegate.cdh.parentContext performBlockAndWait:^{
+//        NSString *entityName = NSStringFromClass([entity class]);
+//        for (NSDictionary *data in dataArray) {
+//            NSManagedObject *object = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:self.appDelegate.cdh.parentContext];
+//            /********
+//             
+//             映射内容
+//             
+//             **********/
+//        }
+//    }];
+//    [self.appDelegate.cdh bgSaveContext];
+//    [self.appDelegate.cdh.parentContext reset];
+//    [self SyncCompleted];
 }
 
 

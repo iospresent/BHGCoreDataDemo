@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "LYSyncEngine.h"
 #import "MainCategory.h"
+#import "TestViewController.h"
+
 @implementation AppDelegate
 
 #define debug 1
@@ -71,6 +73,9 @@
    // [[LYSyncEngine sharedEngine] communicateWithServer];
    // [[LYSyncEngine sharedEngine] startSyncEngineForMainCategoryWithId:@"FOUR"];
    // [self downloadMainCatWithId:@"FOUR"];
+    self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.rootViewController=[[TestViewController alloc] init];
+    [self.window makeKeyAndVisible];
 
     return YES;
 }
