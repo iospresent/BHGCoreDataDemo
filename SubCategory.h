@@ -2,7 +2,7 @@
 //  SubCategory.h
 //  BHGDataNew
 //
-//  Created by baihuogou on 14-4-12.
+//  Created by baihuogou on 14-4-13.
 //  Copyright (c) 2014年 baihuogou. All rights reserved.
 //
 
@@ -13,14 +13,16 @@
 
 @interface SubCategory : NSManagedObject
 
-@property (nonatomic, retain) NSString * categoryId;
+@property (nonatomic, retain) NSString * productCategoryId;
 @property (nonatomic, retain) NSString * categoryName;
-@property (nonatomic, retain) NSNumber * index;
-@property (nonatomic, retain) NSData * thumbnail;
-@property (nonatomic, retain) NSDate * updatedAt;
 @property (nonatomic, retain) NSString * parentId;
+@property (nonatomic, retain) NSData * thumbnail;
+@property (nonatomic, retain) NSString * categoryImageUrl;
+@property (nonatomic, retain) NSString * linkOneImageUrl;
+@property (nonatomic, retain) NSString * linkTwoImageUrl;
+@property (nonatomic, retain) NSDate * lastUpdatedStamp;
 @property (nonatomic, retain) NSOrderedSet *items;
-@property (nonatomic, retain) MainCategory *main;
+@property (nonatomic, retain) MainCategory *mainCat;
 @end
 
 @interface SubCategory (CoreDataGeneratedAccessors)

@@ -127,9 +127,9 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
             for (NSDictionary *data in result) {
                 MainCategory *mainCat = [NSEntityDescription insertNewObjectForEntityForName:@"MainCategory" inManagedObjectContext:self.appDelegate.cdh.opContext];
                 mainCat.categoryName = data[@"categoryName"];
-                mainCat.categoryId = data[@"productCategoryId"];
+                mainCat.productCategoryId = data[@"productCategoryId"];
                 mainCat.thumbnail = nil;
-                mainCat.updatedAt = nil;
+                mainCat.lastUpdatedStamp = nil;
             }
             [self.appDelegate.cdh saveOpContext];
             [self.appDelegate.cdh.opContext reset];
@@ -161,6 +161,9 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
 -(void)startSyncEngineForMainCategoryWithId:(NSString *)catId{
     NetworkStatus status =  [self.networkReachability currentReachabilityStatus];
     if (!self.syncInProgress && status != NotReachable){
+        [self willChangeValueForKey:@"syncInProgress"];
+        _syncInProgress = YES;
+        [self didChangeValueForKey:@"syncInProgress"];
         NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"MainCategory"];
        NSUInteger count = [self.appDelegate.cdh.context countForFetchRequest:request error:nil];
         NSArray *test = [self.appDelegate.cdh.context executeFetchRequest:request error:nil];
@@ -181,7 +184,7 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
     if (!self.syncInProgress && status != NotReachable){
         NSOrderedSet *subCats = mainCat.subs;
         if (![subCats count]) {
-            [self downloadSubCatWithId:subCatId parentId:mainCat.categoryId];
+            [self downloadSubCatWithId:subCatId parentId:mainCat.productCategoryId];
         } else{
             /* 增量更新 */
             NSLog(@"增量更新");
@@ -214,9 +217,9 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
             for (NSDictionary *data in result) {
                 MainCategory *mainCat = [NSEntityDescription insertNewObjectForEntityForName:@"MainCategory" inManagedObjectContext:self.appDelegate.cdh.parentContext];
                 mainCat.categoryName = data[@"categoryName"];
-                mainCat.categoryId = data[@"productCategoryId"];
+                mainCat.productCategoryId = data[@"productCategoryId"];
                 mainCat.thumbnail = nil;
-                mainCat.updatedAt = nil;
+                mainCat.lastUpdatedStamp = nil;
                 mainCat.index = [NSNumber numberWithInteger:[result indexOfObject:data]];
             }
             
@@ -246,9 +249,9 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
             for (NSDictionary *data in result) {
                 SubCategory *subCat = [NSEntityDescription insertNewObjectForEntityForName:@"SubCategory" inManagedObjectContext:self.appDelegate.cdh.context];
                 subCat.categoryName = data[@"categoryName"];
-                subCat.categoryId = data[@"productCategoryId"];
+                subCat.productCategoryId = data[@"productCategoryId"];
                 subCat.thumbnail = nil;
-                subCat.updatedAt = nil;
+                subCat.lastUpdatedStamp = nil;
                 subCat.parentId = parentId;
             }
 
@@ -303,10 +306,13 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
 
 
 
--(NSArray *)loadDataFromCoreDataForEntity:(NSString *)entityName withId:(NSString *)subId{
+-(NSArray *)loadDataFromCoreDataForEntity:(NSString *)entityName withId:(NSString *)parentId sortUsingIndex:(BOOL)isSorted{
     NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:entityName];
-    if (subId) {
-        request.predicate = [NSPredicate predicateWithFormat:@"parentId = %@",subId];
+    if (parentId) {
+        request.predicate = [NSPredicate predicateWithFormat:@"parentId = %@",parentId];
+    }
+    if (isSorted) {
+        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"index" ascending:YES]];
     }
     return  [self.appDelegate.cdh.context executeFetchRequest:request error:nil];
 }
@@ -317,5 +323,56 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
     [self.appDelegate.cdh backgroundSaveContext];
     
 }
+
+-(NSString *)dateForEntity:(NSString *)entityName withIdKey:(NSString *)entityIdKey IdValue:(NSString *)entityIdValue{
+    NetworkStatus status =  [self.networkReachability currentReachabilityStatus];
+    if (!self.syncInProgress && status != NotReachable){
+        NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"entityName"];
+            if (!entityIdKey && !entityIdValue) {
+                request.predicate = [NSPredicate predicateWithFormat:@"%K = %@", entityIdKey,entityIdValue];
+            }
+            NSUInteger count = [self.appDelegate.cdh.context countForFetchRequest:request error:nil];
+            if (!count) {
+                 return  @"1654-05-01 00:00:00";
+            } else {
+                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+
+                return [dateFormatter stringFromDate:[self mostRecentUpdatedAtDateForEntityWithName:entityName usingRequest:request]];
+            
+            }
+        }
+    return nil;
+}
+-(NSString *)dateForEntityObject:(NSManagedObject *)entity withChildRelationshipKey:(NSString *)key{
+    NSOrderedSet *children = [entity valueForKey:key];
+    if (![children count]) {
+        return  @"1654-05-01 00:00:00";
+    } else {
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        NSArray *temp = [[children array] sortedArrayUsingDescriptors:[NSSortDescriptor sortDescriptorWithKey:@"lastUpdatedStamp" ascending:NO]];
+        return [dateFormatter stringFromDate:[[temp firstObject] valueForKey:@"lastUpdatedStamp"]];
+    }
+    return nil;
+}
+
+-(void)processDataArray:(NSArray *)dataArray intoCoreDataForEntityObject:(NSManagedObject *)entity withIdKey:(NSString *)entityIdKey{
+    [self.appDelegate.cdh.parentContext performBlockAndWait:^{
+        NSString *entityName = NSStringFromClass([entity class]);
+        for (NSDictionary *data in dataArray) {
+            NSManagedObject *object = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:self.appDelegate.cdh.parentContext];
+            /********
+             
+             映射内容
+             
+             **********/
+        }
+    }];
+    [self.appDelegate.cdh bgSaveContext];
+    [self.appDelegate.cdh.parentContext reset];
+    [self SyncCompleted];
+}
+
 
 @end

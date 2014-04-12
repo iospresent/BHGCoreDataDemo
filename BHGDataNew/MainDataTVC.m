@@ -71,22 +71,23 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     UINib *cellNib = [UINib nibWithNibName:@"MyCell" bundle:nil];
     [self.tableView registerNib:cellNib forCellReuseIdentifier:@"test"];
     self.tableView.rowHeight = 80;
     [[NSNotificationCenter defaultCenter] addObserverForName:@"SyncEngineSyncCompleted" object:nil queue:nil usingBlock:^(NSNotification *note) {
-       self.dataArray =  [self.engine loadDataFromCoreDataForEntity:@"MainCategory"withId:nil];
+       self.dataArray =  [self.engine loadDataFromCoreDataForEntity:@"MainCategory"withId:nil  sortUsingIndex:YES];
+        NSLog(@"__________________________finished!");
         [self.tableView reloadData];
     }];
     
 
-    [self.engine startSyncEngineForMainCategoryWithId:@"FOUR"];
+   
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
         [self.engine addObserver:self forKeyPath:@"syncInProgress" options:NSKeyValueObservingOptionNew context:nil];
+     [self.engine startSyncEngineForMainCategoryWithId:@"FOUR"];
     
 }
 
@@ -111,8 +112,10 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if ([keyPath isEqualToString:@"syncInProgress"]) {
-        NSLog(@"LOVE IS GREAT!");
-    }
+        BOOL status = [change objectForKey:NSKeyValueChangeNewKey];
+        BOOL statusO = [change objectForKey:NSKeyValueChangeOldKey];
+        NSLog(@"%d,%d,%@",statusO,status,change);
+        }
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
@@ -121,7 +124,7 @@
     NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
     MainCategory *mainCat = self.dataArray[indexPath.row];
     subtvc.mainCategory = mainCat;
-    subtvc.subId = mainCat.categoryId;
+    subtvc.subId = mainCat.productCategoryId;
 }
 
 @end

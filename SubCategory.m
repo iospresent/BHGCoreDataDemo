@@ -2,7 +2,7 @@
 //  SubCategory.m
 //  BHGDataNew
 //
-//  Created by baihuogou on 14-4-12.
+//  Created by baihuogou on 14-4-13.
 //  Copyright (c) 2014年 baihuogou. All rights reserved.
 //
 
@@ -13,13 +13,15 @@
 
 @implementation SubCategory
 
-@dynamic categoryId;
+@dynamic productCategoryId;
 @dynamic categoryName;
-@dynamic index;
-@dynamic thumbnail;
-@dynamic updatedAt;
 @dynamic parentId;
+@dynamic thumbnail;
+@dynamic categoryImageUrl;
+@dynamic linkOneImageUrl;
+@dynamic linkTwoImageUrl;
+@dynamic lastUpdatedStamp;
 @dynamic items;
-@dynamic main;
+@dynamic mainCat;
 
 @end

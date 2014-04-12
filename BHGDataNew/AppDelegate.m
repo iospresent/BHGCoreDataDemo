@@ -44,9 +44,9 @@
             for (NSDictionary *data in result) {
                 MainCategory *mainCat = [NSEntityDescription insertNewObjectForEntityForName:@"MainCategory" inManagedObjectContext:self.cdh.opContext];
                 mainCat.categoryName = data[@"categoryName"];
-                mainCat.categoryId = data[@"productCategoryId"];
+                mainCat.productCategoryId = data[@"productCategoryId"];
                 mainCat.thumbnail = nil;
-                mainCat.updatedAt = nil;
+                mainCat.lastUpdatedStamp = nil;
                 mainCat.index = [NSNumber numberWithInteger:[result indexOfObject:data]];
             }
             

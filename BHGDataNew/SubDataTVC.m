@@ -50,9 +50,7 @@
     self.tableView.rowHeight = 80;
     [[NSNotificationCenter defaultCenter] addObserverForName:@"SyncEngineSyncCompleted" object:nil queue:nil usingBlock:^(NSNotification *note) {
         if (![self.mainCategory.subs count]) {
-           
-
-            self.dataArray =  [self.engine loadDataFromCoreDataForEntity:@"SubCategory"withId:self.subId];
+            self.dataArray =  [self.engine loadDataFromCoreDataForEntity:@"SubCategory"withId:self.subId sortUsingIndex:NO];
             [self.tableView reloadData];
         } else {
             self.dataArray = [self.mainCategory.subs array];
@@ -82,7 +80,7 @@
     
     UITableViewCell *cell =[tableView dequeueReusableCellWithIdentifier:@"sub"];
     SubCategory *subCat = self.dataArray[indexPath.row];
-    [self.engine establishRelationship:@"main" betweenChild:subCat andParent:self.mainCategory];
+    [self.engine establishRelationship:@"mainCat" betweenChild:subCat andParent:self.mainCategory];
     cell.textLabel.text = subCat.categoryName;
 
     return cell;

@@ -25,8 +25,6 @@
 
 
 
--(void)communicateWithServer;
-
 -(void)SyncUsingOperationBlock:(void(^)(void))operation completionBlock:(void(^)(void))completionBlock;
 
 
@@ -41,7 +39,21 @@
 
 -(void)establishRelationship:(NSString *)key betweenChild:(NSManagedObject *)child andParent:(NSManagedObject *)parent;
 
--(NSArray *)loadDataFromCoreDataForEntity:(NSString *)entityName withId:(NSString *)subId;
+
+
+
+
+// 获取当前数据最近时间
+-(NSString *)dateForEntity:(NSString *)entityName withIdKey:(NSString *)entityIdKey IdValue:(NSString *)entityIdValue;
+-(NSString *)dateForEntityObject:(NSManagedObject *)entity withChildRelationshipKey:(NSString *)key;
+
+//将当前数组处理至CoreData
+
+-(void)processDataArray:(NSArray *)dataArray intoCoreDataForEntityObject:(NSManagedObject *)entity withIdKey:(NSString *)entityIdKey;
+
+//从数据库中调出数据
+-(NSArray *)loadDataFromCoreDataForEntity:(NSString *)entityName withId:(NSString *)parentId sortUsingIndex:(BOOL)isSorted;
+
 
 
 @end

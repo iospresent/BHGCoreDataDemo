@@ -2,7 +2,7 @@
 //  ProductItem.h
 //  BHGDataNew
 //
-//  Created by baihuogou on 14-4-12.
+//  Created by baihuogou on 14-4-13.
 //  Copyright (c) 2014年 baihuogou. All rights reserved.
 //
 
