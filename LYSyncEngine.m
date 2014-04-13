@@ -103,13 +103,13 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
 - (NSDate *)mostRecentUpdatedAtDateForEntityWithName:(NSString *)entityName usingRequest:(NSFetchRequest *)request{
     __block NSDate *date = nil;
     [request setSortDescriptors:[NSArray arrayWithObject:
-                                 [NSSortDescriptor sortDescriptorWithKey:@"updatedAt" ascending:NO]]];
+                                 [NSSortDescriptor sortDescriptorWithKey:@"lastUpdatedStamp" ascending:NO]]];
     [request setFetchLimit:1];
     [self.appDelegate.cdh.opContext performBlockAndWait:^{
         NSError *error = nil;
-        NSArray *results = [self.appDelegate.cdh.opContext executeFetchRequest:request error:&error];
+        NSArray *results = [self.appDelegate.cdh.context executeFetchRequest:request error:&error];
         if ([results lastObject])   {
-            date = [[results lastObject] valueForKey:@"updatedAt"];
+            date = [[results lastObject] valueForKey:@"lastUpdatedStamp"];
         }
     }];
     return date;
@@ -327,13 +327,17 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
 -(NSString *)dateForEntity:(NSString *)entityName withIdKey:(NSString *)entityIdKey IdValue:(NSString *)entityIdValue{
     NetworkStatus status =  [self.networkReachability currentReachabilityStatus];
     if (!self.syncInProgress && status != NotReachable){
+  
         NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:entityName];
-        if (!entityIdKey && !entityIdValue) {
-            request.predicate = [NSPredicate predicateWithFormat:@"%K = %@", entityIdKey,entityIdValue];
-        }
         NSUInteger count = [self.appDelegate.cdh.context countForFetchRequest:request error:nil];
-        if (!count) {
-            return  @"1654-05-01 00:00:00";
+    
+        //NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"MainCategory"];
+//        if (!entityIdKey && !entityIdValue) {
+//            request.predicate = [NSPredicate predicateWithFormat:@"%K = %@", entityIdKey,entityIdValue];
+//        }
+       // NSUInteger count = [self.appDelegate.cdh.context countForFetchRequest:request error:nil];
+        if (count==0) {
+            return  @"2011-01-01 00:00:00";
         } else {
             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
             [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
@@ -341,10 +345,12 @@ NSString * const kSyncEngineSyncCompletedNotificationName = @"SyncEngineSyncComp
             return [dateFormatter stringFromDate:[self mostRecentUpdatedAtDateForEntityWithName:entityName usingRequest:request]];
             
         }
-    }
-    return nil;
+  
+
     
     //return  @"2011-01-01 00:00:00";
+    }
+        return nil;
 }
 -(NSString *)dateForEntityObject:(NSManagedObject *)entity withChildRelationshipKey:(NSString *)key{
     NSOrderedSet *children = [entity valueForKey:key];

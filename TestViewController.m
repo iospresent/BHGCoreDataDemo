@@ -34,25 +34,26 @@
 //    table.dataSource=self;
 //    table.delegate=self;
 //    [self.view addSubview:table];
+    self.view.backgroundColor=[UIColor whiteColor];
     
-    NSString *str = [[LYSyncEngine sharedEngine] dateForEntity:@"SubCategory" withIdKey:nil IdValue:nil];
+    NSString *str = [[LYSyncEngine sharedEngine] dateForEntity:@"MainCategory" withIdKey:nil IdValue:nil];
     //http://192.168.1.40:8080/baihuogou-api/rest/product/last_update?category_id=ycs_tttj_reco_0201&last_update=2011-01-01%2000:00:00&page_size=5&page_now=1
 
    // http://192.168.1.40:8080/baihuogou-api/rest/product/last_update?category_id=%E5%8F%82%E6%95%B0&last_update=%E5%8F%82%E6%95%B0&page_size=%E5%8F%82%E6%95%B0&page_now=%E5%8F%82%E6%95%B0
     //bhg_man_root_1
     
-    
+//    
     NSString *urlString=[NSString stringWithFormat:@"http://192.168.1.40:8080/baihuogou-api/rest/product/last_update?category_id=ycs_tttj_reco_0201&last_update=%@&page_size=5&page_now=1",str];
     
     AFHTTPRequestOperationManager *manager=[AFHTTPRequestOperationManager manager];
     
     [manager GET:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@",responseObject);
+        NSLog(@"____________%@",responseObject);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"___________error:%@",error);
     }];
-    
+//
     
     
     
